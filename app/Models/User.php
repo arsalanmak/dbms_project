@@ -10,7 +10,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+// implements MustVerifyEmail
+class User extends Authenticatable 
 {
     use HasApiTokens;
     use HasFactory;
@@ -58,4 +59,12 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function roles() {
+        return $this->belongsToMany(Role::class, 'user_roles', 'user_id', 'role_id')->withTimestamps();
+    }
+    
+    public function cars() {
+        return $this->hasMany(Enroll::class, 'user_id', 'id');
+    }
 }

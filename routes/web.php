@@ -22,9 +22,12 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified'
 ])->group(function () {
-    Route::get('/dashboard', function () { return view('dashboard'); })->name('dashboard');
+
     Route::get('/cars', Cars::class)->name('cars');
 
+    Route::middleware(['isAdmin'])->group(function(){
+        Route::get('/dashboard', function () { return view('dashboard'); })->name('dashboard');
+    });
     
     // Route::get('/car/{car}', ShowPosts::class)->name('car.detail');
     // Route::get('/users', ShowPosts::class)->name('users');
