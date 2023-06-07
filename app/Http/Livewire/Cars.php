@@ -36,7 +36,7 @@ class Cars extends Component
         'car.nPlate' => 'Enter Number plate of car',
         'car.rent' => 'Enter amount',
         'car.passenger' => 'Enter Number of passengers',
-        'car.condition' => 'Please Select Any',
+        'car.condition' => 'Please Select Any', 
         'car.ac' => 'Please Select Any',
     ];
 
@@ -58,7 +58,7 @@ class Cars extends Component
             'price'         => $this->car['rent'],
             'ac'            => $this->car['ac'],
             'condition'     => $this->car['condition'],
-            // 'status'        => $this->car['status']
+            'status'        => $this->car['status']
         ]);
 
         $this->reset();
@@ -74,5 +74,9 @@ class Cars extends Component
     public function deleteConfirmed() {
         Car::find($this->deleteSelectedCar->id)->delete();
         $this->deleteModal = false;
+    }
+
+    public function forcedelete(){
+        
     }
 }
