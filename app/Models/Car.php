@@ -17,10 +17,12 @@ class Car extends Model
      */
     protected $fillable = [
         'title',
+        'n_plate',
         'passenger',
         'ac',
         'condition',
         'description',
-        'status'
+        'status',
+        'price'
     ];
 }
