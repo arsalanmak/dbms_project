@@ -1,3 +1,13 @@
+@push('style')
+    <style>
+        /* Toggle A */
+        input:checked ~ .dot {
+        transform: translateX(100%);
+        background-color: #7a741d;
+        }
+    </style>
+@endpush
+
 <div class="p-6">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -18,17 +28,19 @@
             @endif
         </div>
         
+        @if(auth()->user()->roles->first()->slug == 'driver')
         <div class="flex items-centre justify-end px-4 py-3 sm:py-6 text-right">
             <x-button wire:click="targetCarModel">
                 {{ __('Create') }}
             </x-button>
         </div>
+        @endif
     </div>
     
     {{-- Modal Form --}}
     <x-dialog-modal wire:model="createShowModal">
         <x-slot name="title">
-            {{ __('Register new car') }}
+            {{ __('Register new car') }} {{ $carId }}
         </x-slot>
 
         <x-slot name="content">
@@ -37,7 +49,7 @@
                     <div class="mr-1 w-full">
                         <div class="mt-4">
                             <x-label for="name" value="{{ __('Name') }}" />
-                            <x-input id="name" class="block mt-1 w-full" type="text" wire:model.defer="car.name" />
+                            <x-input id="name" class="block mt-1 w-full py-2 px-2 border border-gray-300" type="text" wire:model.defer="car.name" />
                             <x-input-error for="car.name" class="mt-2" />
                         </div>
                     </div>
@@ -45,7 +57,7 @@
                     <div class="ml-1 w-full">
                         <div class="mt-4">
                             <x-label for="nPlate" value="{{ __('Number Plate') }}" />
-                            <x-input id="nPlate" class="block mt-1 w-full" type="text" wire:model.defer="car.nPlate" />
+                            <x-input id="nPlate" class="block mt-1 w-full py-2 px-2 border border-gray-300" type="text" wire:model.defer="car.nPlate" />
                             <x-input-error for="car.nPlate" class="mt-2" />
                         </div>
                     </div>
@@ -80,13 +92,13 @@
                 <div class="flex flex-row">
                     <div class="mr-1 w-full">
                         <x-label for="passenger" value="{{ __('Passenger (Capicity)') }}" />
-                        <x-input id="passenger" class="block mt-1 w-full" type="number" wire:model.defer="car.passenger" />
+                        <x-input id="passenger" class="block mt-1 w-full py-2 px-2 border border-gray-300" type="number" wire:model.defer="car.passenger" />
                         <x-input-error for="car.passenger" class="mt-2" />
                     </div>
                         
                     <div class="mr-1 w-full">
                         <x-label for="rent" value="{{ __('Rent Amount') }}" />
-                        <x-input id="rent" class="block mt-1 w-full" type="number" wire:model.defer="car.rent" step="00.01" placeholder="00.01" />
+                        <x-input id="rent" class="block mt-1 w-full py-2 px-2 border border-gray-300" type="number" wire:model.defer="car.rent" step="00.01" placeholder="00.01" />
                         <x-input-error for="car.rent" class="mt-2" />
                     </div>
                 </div>
@@ -94,7 +106,7 @@
 
             <div class="mt-4">
                 <x-label for="description" value="{{ __('Description (Optional)') }}" />
-                <x-textarea class="w-full" id="description" wire:model.defer="car.description" />
+                <x-textarea class="w-full border border-gray-300 px-2 py-2" id="description" wire:model.defer="car.description" />
                 <x-input-error for="car.description" class="mt-2" />
             </div>
     
@@ -111,15 +123,15 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
     
-                {{-- @if ($modelId)
+                @if ($carId)
                     <x-button class="ml-3" wire:click="update" wire:loading.attr="disabled">
                         {{ __('Update') }}
                     </x-button>
-                @else --}}
+                @else
                     <x-button class="ml-3" wire:click="store" wire:loading.attr="disabled">
                         {{ __('Create') }}
                     </x-button>
-                {{-- @endif --}}
+                @endif
             </div>
         </x-slot>
     </x-dialog-modal>
@@ -153,19 +165,18 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 @foreach($cars as $key => $car)
-                    <a href="#" >
-                        <div class="mt-3 overflow-hidden shadow-xl sm:rounded-lg">
-                            <div class="bg-gray-200 bg-opacity-25 grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 p-6 lg:p-8">
-                                <div>
+                        <div class="px-6 py-5 mt-3 overflow-hidden shadow-xl sm:rounded-lg">
+                            <div class="flex flex-row justify-between">
+                                <div class="items-center">
                                     <div class="flex items-center">
                                         <img src="{{ asset('images/car_post_icon.svg') }}" width="30px">
                                         <h2 class="ml-3 text-xl font-semibold text-gray-900">
                                             <a href="#">{{ $car->title }}</a>
                                         </h2>
                                     </div>
-
                                     <ul class="mt-4 text-gray-500 text-sm leading-relaxed">
-                                        <li>Capicity: <strong> {{ $car->passenger}}</strong></li>
+                                        <li>Number Plate: <strong> {{ $car->n_plate}}</strong></li>
+                                        <li>Capacity: <strong> {{ $car->passenger}}</strong></li>
                                         <li>AC: <strong> {!! $car->ac ? "Yes" : "No" !!}</strong></li>
                                         <li>Condition: 
                                             <strong> 
@@ -178,13 +189,25 @@
                                         <li>Status: <strong >{!! !$car->status ? "Temporary Unavailable" : "Available"!!}</strong></li>
                                     </ul>
                                 </div>
-                                <br>
-                                <x-button  wire:click="deleteShowModal({{ $car->id }})">
-                                    {{ __('Book Now') }}
-                                </x-button>
+                                <div class="my-3 flex flex-col justify-between">
+                                    @if(auth()->user()->roles->first()->slug == 'customer')
+                                        @if($car->status)
+                                            <x-button  wire:click="targetCarModel">
+                                                {{ __('Book Now') }}
+                                            </x-button>
+                                        @endif
+                                    @elseif(auth()->user()->roles->first()->slug == 'driver')
+                                        <label for="toogleA" class="flex items-center cursor-pointer">
+                                            <div class="relative">
+                                                <input id="toogleA" type="checkbox" {!! $car->status ? "checked" : "" !!} class="sr-only" wire:change="carStatusUpdate({{ $car->id }})" />
+                                                <div class="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+                                                <div class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
+                                            </div>
+                                        </label>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </a>
                 @endforeach
             </div>
         </div>

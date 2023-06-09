@@ -8,6 +8,8 @@ use Livewire\Component;
 class Cars extends Component
 {
     public $createShowModal = false;
+
+    public $carId;
     public $car;
     
 
@@ -44,6 +46,7 @@ class Cars extends Component
         $this->resetValidation();
         $this->reset();
         $this->createShowModal = true;
+        dd($this->carId);
     }
 
 
@@ -76,7 +79,12 @@ class Cars extends Component
         $this->deleteModal = false;
     }
 
-    public function forcedelete(){
-        
+    public function carStatusUpdate(int $carId) {
+        $car = Car::where('id', $carId)
+            ->first();
+
+        $car->update([
+            'status' => !$car->status  
+        ]);
     }
 }

@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('icon')->nullable();
+            $table->string('n_plate');
             $table->integer('passenger');
+            $table->integer('price');
             $table->integer('condition')->nullable();
             $table->boolean('ac')->default(0);
             $table->string('description')->nullable();

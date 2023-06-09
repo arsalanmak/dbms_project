@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Livewire\Cars;
+use App\Http\Livewire\Dashboard;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,7 +27,7 @@ Route::middleware([
     Route::get('/cars', Cars::class)->name('cars');
 
     Route::middleware(['isAdmin'])->group(function(){
-        Route::get('/dashboard', function () { return view('dashboard'); })->name('dashboard');
+        Route::get('/dashboard', Dashboard::class)->name('dashboard');
     });
     
     // Route::get('/car/{car}', ShowPosts::class)->name('car.detail');
